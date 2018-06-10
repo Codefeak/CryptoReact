@@ -1,10 +1,9 @@
 import React from 'react';
 
 const Card = props => {
-	console.dir(props);
         return(
-        	props.data.map(item=>{
-        		return(	<li className = "cards">
+        	props.data.map((item,i)=>{
+        		return(	<li className = "cards" key={item.id} index = {i} onClick={props.Click}>
         					<img src="" alt=""/>
         					<h3>{item.symbol}</h3>
         					<hr />
