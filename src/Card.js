@@ -13,7 +13,7 @@ const Card = props => {
         				</li>)
 
        })
-        	
+
         );
 }
 
