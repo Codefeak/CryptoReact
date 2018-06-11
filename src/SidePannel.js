@@ -6,7 +6,7 @@ const SidePannel =(props)=>{
                 <div className="search-panel">
                     <div>
                         <input id="input" type="text" name="input"  
-                        onChange={props.Search} placeholder="Enter to Search"/>
+                        onKeyDown={props.Search} placeholder="Enter to Search"/>
                     </div>
                     <button id="sort-name" onClick={props.SortName}>Sort By Name</button>
                     <button id="sort-rank" onClick={props.SortRank}>Sort By Rank</button>

@@ -30,11 +30,14 @@ class App extends Component {
     this.sortByPriceAsc= this.sortByPriceAsc.bind(this);
     this.handleKeypress = this.handleKeypress.bind(this);
     this.handleCardClick = this.handleCardClick.bind(this);
+    this.ascIcon= this.ascIcon.bind(this);
+    this.dscIcon = this.dscIcon.bind(this);
   }
 
   handelSearch(){
     const input = document.querySelector('#input');
     const ul = document.querySelector('ul');
+    console.log();
     let temp = this.state.data.filter(element=>{
                   if(element.symbol.toLowerCase().includes(input.value)||
                     element.name.toLowerCase().includes(input.value.toLowerCase())){
@@ -48,19 +51,15 @@ class App extends Component {
 
   handleKeypress(e){
     if(e.target.id === 'input'){
-      if(e.keyCode ===13){
+      if(e.keyCode ===8){
         this.componentDidMount();
-        console.log(this.state);
+         this.handelSearch();
+        }
+      }
+      if(e.keyCode===13){
         this.handelSearch();
       }
-      if(e.keyCode===8){
-        this.componentDidMount();
-        console.log(this.state);
-        this.handelSearch();
-
-      }else{this.handelSearch()}
     }
-  }
 
   handleSortName(){
     const ul = document.querySelector('ul');
@@ -224,6 +223,7 @@ class App extends Component {
 
   handleCardClick(e){
     if(e.target.className ==="cards"){
+      console.log(e.target)
       console.dir(e.target);
     }
   }
@@ -239,6 +239,18 @@ class App extends Component {
       })
       .catch((err)=>{console.log(err)})
   
+  }
+
+  ascIcon(){
+    document.querySelector('.fa-sort-amount-up').classList.add('show');
+    document.querySelector('.fa-sort-amount-up').classList.remove('hide');
+    document.querySelector('.fa-sort-amount-down').classList.remove('show');
+  }
+
+  dscIcon(){
+    document.querySelector('.fa-sort-amount-down').classList.remove('hide');
+    document.querySelector('.fa-sort-amount-down').classList.add('show');
+    document.querySelector('.fa-sort-amount-up').classList.remove('show');
   }
 
   componentDidMount(){
