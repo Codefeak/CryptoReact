@@ -3,7 +3,7 @@ import React from 'react';
 const Card = props => {
         return(
         	props.data.map((item,i)=>{
-        		return(	<li className = "cards" key={item.id} index = {i} onClick={props.Click}>
+        		return(	<li className = "cards" key={`${item.id}${i}`} index = {i} onClick={props.Click}>
         					<img src='' alt=""/>
         					<h3>{item.symbol}</h3>
         					<hr />

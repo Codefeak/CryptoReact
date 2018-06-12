@@ -54,15 +54,15 @@ class App extends Component {
     this.dscIcon = this.dscIcon.bind(this);
   }
 
-  handelSearch(){
-    const input = document.querySelector('#input');
+  handelSearch(e){
+    const input = e.target;
     let temp = this.state.data.filter(element=>{
                   if(element.symbol.toLowerCase().includes(input.value)||
                     element.name.toLowerCase().includes(input.value.toLowerCase())){
                     return element;
                   }
                 });
-   this.setState({isSearched:'searched'});
+    this.setState({isSearched:'searched'});
     this.setState({data:temp});
    <Card data={this.temp}/>
   }
@@ -71,11 +71,11 @@ class App extends Component {
     if(e.target.id === 'input'){
       if(e.keyCode ===8){
         this.componentDidMount();
-         this.handelSearch();
+         this.handelSearch(e);
         }
     }
       if(e.keyCode===13){
-        this.handelSearch();
+        this.handelSearch(e);
       }
   }
 
@@ -92,28 +92,18 @@ class App extends Component {
   }
 
   handleSortName(){
-    if(this.state.isAsc==='show'|| this.state.isDsc==='hide'){
-      this.sortByNameDsc();
-    }else{
-      this.sortByNameAsc();
-    }
+    (this.state.isAsc==='show'|| this.state.isDsc==='hide') ? this.sortByNameDsc() : 
+    this.sortByNameAsc();
   }
 
     handleSortPrice(){
-    if(this.state.isAsc==='show'|| this.state.isDsc==='hide'){
-      this.sortByPriceDsc();
-    }else{
-      this.sortByPriceAsc();
-    }
+    (this.state.isAsc==='show'|| this.state.isDsc==='hide') ? this.sortByPriceDsc() :
+    this.sortByPriceAsc();
   }
 
   handleSortRank(){
-    if(this.state.isAsc==='show'|| this.state.isDsc==='hide'){
-      this.sortByRankDsc();
-
-    }else{
-      this.sortByRankAsc();
-    }
+    (this.state.isAsc==='show'|| this.state.isDsc==='hide') ? this.sortByRankDsc() :
+    this.sortByRankAsc();
   }
 
   sortByNameAsc(){
@@ -284,7 +274,7 @@ class App extends Component {
         </div>
         <div className="large-space">
           <div className="disp-header">
-            <h2 className="yellow">All Currencies</h2>
+            <h2 className="yellow">{`Number of Currencies Displayed: ${this.state.data.length} `}</h2>
             <i className={`fas fa-sort-amount-up ${this.state.isAsc}`}></i>
             <i className={`fas fa-sort-amount-down ${this.state.isDsc}`}></i>
           </div> 

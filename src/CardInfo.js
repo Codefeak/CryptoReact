@@ -2,6 +2,7 @@ import React from 'react';
 
 const CardInfo = props=>{
 	console.log(props.data);
+	
 	return(
 		<div className="card-info show">
 			<span className = "yellow">ID: </span><span id="">{props.data[0].id}</span><br/>
