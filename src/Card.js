@@ -4,7 +4,7 @@ const Card = props => {
         return(
         	props.data.map((item,i)=>{
         		return(	<li className = "cards" key={item.id} index = {i} onClick={props.Click}>
-        					<img src="" alt=""/>
+        					<img src='' alt=""/>
         					<h3>{item.symbol}</h3>
         					<hr />
         					<span>{item.name}</span>

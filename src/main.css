@@ -90,7 +90,7 @@ button:hover{
 .disp-header{
   display: flex;
   flex-direction: row;
-}
+}   
 
 h2{
   margin: 1vw 1vw 1vw 5vw;  

@@ -13,7 +13,27 @@ class App extends Component {
     super(props);
     this.state={
         data:[],
-        isLoading:false,
+        filteredData:[{
+                            id:"",
+                            name:"",
+                            symbol:"",
+                            rank:"",
+                            volume_usd:"",
+                            available_supply:"",
+                            last_updated:"",
+                            market_cap_usd:"",
+                            max_supply:"",
+                            name:"",
+                            percent_change_1h:"",
+                            percent_change_7d:"",
+                            percent_change_24h:"",
+                            price_btc:"",
+                            price_usd:"",
+                            total_supply:"",
+                }],
+        isAsc:"hide",
+        isDsc:'hide',
+        isSearched:"",
         error:null,
     }
     this.handelSearch = this.handelSearch.bind(this);
@@ -36,15 +56,13 @@ class App extends Component {
 
   handelSearch(){
     const input = document.querySelector('#input');
-    const ul = document.querySelector('ul');
-    console.log();
     let temp = this.state.data.filter(element=>{
                   if(element.symbol.toLowerCase().includes(input.value)||
                     element.name.toLowerCase().includes(input.value.toLowerCase())){
                     return element;
                   }
                 });
-   ul.id ="searched";
+   this.setState({isSearched:'searched'});
     this.setState({data:temp});
    <Card data={this.temp}/>
   }
@@ -55,24 +73,52 @@ class App extends Component {
         this.componentDidMount();
          this.handelSearch();
         }
-      }
+    }
       if(e.keyCode===13){
         this.handelSearch();
       }
+  }
+
+  handleCardClick(e){
+    if(e.target.className ==="cards"){
+      const tmp = [...this.state.data];
+      const flitered=tmp.filter(item=>{
+        if(e.target.childNodes[3].innerHTML===item.name){
+        return item;
+        }
+      })
+      this.setState({filteredData:flitered});
     }
+  }
 
   handleSortName(){
-    const ul = document.querySelector('ul');
-    if(ul.className==='asc'|| ul.className!=='dsc'){
+    if(this.state.isAsc==='show'|| this.state.isDsc==='hide'){
       this.sortByNameDsc();
     }else{
       this.sortByNameAsc();
     }
   }
 
+    handleSortPrice(){
+    if(this.state.isAsc==='show'|| this.state.isDsc==='hide'){
+      this.sortByPriceDsc();
+    }else{
+      this.sortByPriceAsc();
+    }
+  }
+
+  handleSortRank(){
+    if(this.state.isAsc==='show'|| this.state.isDsc==='hide'){
+      this.sortByRankDsc();
+
+    }else{
+      this.sortByRankAsc();
+    }
+  }
+
   sortByNameAsc(){
-    const ul = document.querySelector('ul');
-    ul.className = "asc";
+    this.setState({isAsc:'show'});
+    this.ascIcon();
     const temp =this.state.data.sort(function(a,b){
           let nameA = a.name.toLowerCase();
           let nameB = b.name.toLowerCase();
@@ -89,8 +135,8 @@ class App extends Component {
   }
 
   sortByNameDsc(){
-    const ul = document.querySelector('ul');
-    ul.className = "dsc";
+    this.setState({isDsc:'show'});
+    this.dscIcon();
     const temp = this.state.data.sort(function(a,b){
           let nameA = a.name.toLowerCase();
           let nameB = b.name.toLowerCase();
@@ -103,58 +149,45 @@ class App extends Component {
            return 0;
                   });
     this.setState({data:temp});
-
         return <Card data = {this.state.data}/>
   }
 
-  handleSortPrice(){
-    const ul = document.querySelector('ul');
-    if(ul.className==='asc'|| ul.className!=='dsc'){
-      this.sortByPriceDsc();
-    }else{
-      this.sortByPriceAsc();
-    }
-  }
-
   sortByPriceAsc(){
-    const ul = document.querySelector('ul');
-    const temp = this.state.data;
-    if(ul.className==='dsc'&& ul.id ==='searched'){
-      ul.classList.remove('dsc');
-      ul.classList.add('asc');
-      // ascIcon();
+    const temp = [...this.state.data];
+    if(this.state.isDsc==='dsc'&& this.state.isSearched ==='searched'){
+      this.setState({isDsc:'hide'}); 
+      this.setState({isAsc:'show'});
+      this.ascIcon();
       temp.sort(function(a,b){
         return b.price_usd-a.price_usd;
       })
       this.setState({data:temp});
         <Card data ={this.state.data}/>
     }else{
-        ul.className = "asc";
-        // ascIcon();
+        this.setState({isAsc:'show'});
+        this.ascIcon();
         temp.sort(function(a,b){
           return b.price_usd-a.price_usd;
         })
         this.setState({data:temp});
         <Card data ={this.state.data}/>
     }
-
   }
 
   sortByPriceDsc(){
-    const ul = document.querySelector('ul');
-    const temp = this.state.data;
-    if(ul.className==='asc'&& ul.id ==='searched'){
-      ul.classList.remove('asc');
-      ul.classList.add('dsc');
-      // ascIcon();
+    const temp = [...this.state.data];
+    if(this.state.isAsc==='show'&& this.state.isSearched ==='searched'){
+      this.setState({isAsc:'hide'});
+      this.setState({isDsc:'show'});
+      this.dscIcon();
       temp.sort(function(a,b){
         return a.price_usd-b.price_usd;
       })
       this.setState({data:temp});
         <Card data ={this.state.data}/>
     }else{
-        ul.className = "dsc";
-        // ascIcon();
+        this.setState({isDsc:'show'});
+        this.dscIcon();
         temp.sort(function(a,b){
           return a.price_usd-b.price_usd;
         })
@@ -163,56 +196,42 @@ class App extends Component {
     }
   }
 
-  handleSortRank(){
-    const ul = document.querySelector('ul');
-    console.log(ul);
-    if(ul.className==='asc'|| ul.className!=='dsc'){
-      this.sortByRankDsc();
-
-    }else{
-      this.sortByRankAsc();
-    }
-  }
-
   sortByRankAsc(){
-   const ul = document.querySelector('ul');
-    const temp = this.state.data;
-    if(ul.className==='dsc'&& ul.id ==='searched'){
-      ul.classList.remove('dsc');
-      ul.classList.add('asc');
-      // ascIcon();
+    const temp = [...this.state.data];
+    if(this.state.isDsc==='show'&& this.state.isSearched ==='searched'){
+      this.setState({isDsc:'hide'});
+      this.setState({isAsc:'show'});
+      this.ascIcon();
       temp.sort(function(a,b){
         return b.rank-a.rank;
       })
       this.setState({data:temp});
         <Card data ={this.state.data}/>
     }else{
-        ul.className = "asc";
-        // ascIcon();
+        this.setState({isAsc:'show'});
+        this.ascIcon();
         temp.sort(function(a,b){
           return b.rank-a.rank;
         })
         this.setState({data:temp});
         <Card data ={this.state.data}/>
     }
-
   }
 
   sortByRankDsc(){
-    const ul = document.querySelector('ul');
-    const temp = this.state.data;
-    if(ul.className==='asc'&& ul.id ==='searched'){
-      ul.classList.remove('asc');
-      ul.classList.add('dsc');
-      // ascIcon();
+    const temp = [...this.state.data];
+    if(this.state.isAsc==='show'&& this.state.isSearched==='searched'){
+      this.setState({isAsc:'hide'});
+      this.setState({isDsc:'show'});
+      this.dscIcon();
       temp.sort(function(a,b){
         return a.rank-b.rank;
       })
       this.setState({data:temp});
         <Card data ={this.state.data}/>
     }else{
-        ul.className = "dsc";
-        // ascIcon();
+        this.setState({isDsc:'show'});
+        this.dscIcon();
         temp.sort(function(a,b){
           return a.rank-b.rank;
         })
@@ -221,12 +240,6 @@ class App extends Component {
     }
   }
 
-  handleCardClick(e){
-    if(e.target.className ==="cards"){
-      console.log(e.target)
-      console.dir(e.target);
-    }
-  }
   
   fetchData(){
     const url = "https://api.coinmarketcap.com/v1/ticker/?limit=20";
@@ -238,19 +251,16 @@ class App extends Component {
           this.setState({data:tmp})
       })
       .catch((err)=>{console.log(err)})
-  
   }
 
   ascIcon(){
-    document.querySelector('.fa-sort-amount-up').classList.add('show');
-    document.querySelector('.fa-sort-amount-up').classList.remove('hide');
-    document.querySelector('.fa-sort-amount-down').classList.remove('show');
+    this.setState({isAsc:'show'});
+    this.setState({isDsc:'hide'});
   }
 
   dscIcon(){
-    document.querySelector('.fa-sort-amount-down').classList.remove('hide');
-    document.querySelector('.fa-sort-amount-down').classList.add('show');
-    document.querySelector('.fa-sort-amount-up').classList.remove('show');
+    this.setState({isDsc:'show'});
+    this.setState({isAsc:'hide'});
   }
 
   componentDidMount(){
@@ -270,13 +280,15 @@ class App extends Component {
             SortRank = {this.handleSortRank}
             SortPrice = {this.handleSortPrice}
           />
-          <CardInfo/>
+          <CardInfo data = {this.state.filteredData}/>
         </div>
         <div className="large-space">
           <div className="disp-header">
             <h2 className="yellow">All Currencies</h2>
+            <i className={`fas fa-sort-amount-up ${this.state.isAsc}`}></i>
+            <i className={`fas fa-sort-amount-down ${this.state.isDsc}`}></i>
           </div> 
-          <ul id="currencies">
+          <ul id={`currencies ${this.state.isSearched}`} >
             <Card data={this.state.data} Click={this.handleCardClick}/>
           </ul>
             
