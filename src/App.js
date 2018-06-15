@@ -72,12 +72,11 @@ class App extends Component {
   handleCardClick(e){
     if(e.target.className ==="cards"){
       let temp = [...this.state.data];
-      const tmp= temp.filter(item=>{
+      this.setState({filteredData:temp.filter(item=>{
         if(e.target.childNodes[3].innerHTML===item.name){
         return item;
         }
-      })
-      this.setState({filteredData:tmp});
+      })});
     }
   }
   

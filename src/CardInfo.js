@@ -4,7 +4,7 @@ const CardInfo = props=>{
 	console.log(props.data);
 	
 	return(
-		<div className="card-info show">
+		<div className="card-info true">
 			<span className = "yellow">ID: </span><span id="">{props.data[0].id}</span><br/>
 			<span className = "yellow">Name: </span><span id="">{props.data[0].name}</span><br/>
 			<span className = "yellow">Symbol: </span><span id="">{props.data[0].symbol}</span><br/>

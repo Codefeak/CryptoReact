@@ -1,7 +1,6 @@
 import React from 'react';
 
 const Card = props => {
-    console.log(props);
         return(
         	props.data.map((item,i)=>{
         		return(	<li className = "cards" key={`${item.id}${i}`} index = {i} onClick={props.Click}>
