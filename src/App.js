@@ -23,7 +23,6 @@ class App extends Component {
                         last_updated:"",
                         market_cap_usd:"",
                         max_supply:"",
-                        name:"",
                         percent_change_1h:"",
                         percent_change_7d:"",
                         percent_change_24h:"",
@@ -31,9 +30,7 @@ class App extends Component {
                         price_usd:"",
                         total_supply:"",
                       }],
-        isAsc:"hide",
-        isDsc:'hide',
-        isSearched:"",
+        isAsc:false,
         error:null,
     }
 
@@ -41,31 +38,23 @@ class App extends Component {
     this.handleSortName = this.handleSortName.bind(this);
     this.handleSortRank = this.handleSortRank.bind(this);
     this.handleSortPrice = this.handleSortPrice.bind(this);
+    this.sortFn = this.sortFn.bind(this);
     this.componentDidMount = this.componentDidMount.bind(this);
     this.fetchData = this.fetchData.bind(this);
-    this.sortByNameDsc = this.sortByNameDsc.bind(this);
-    this.sortByNameAsc = this.sortByNameAsc.bind(this);
-    this.sortByRankAsc = this.sortByRankAsc.bind(this);
-    this.sortByRankDsc = this.sortByRankDsc.bind(this);
-    this.sortByPriceDsc = this.sortByPriceDsc.bind(this);
-    this.sortByPriceAsc= this.sortByPriceAsc.bind(this);
     this.handleKeypress = this.handleKeypress.bind(this);
     this.handleCardClick = this.handleCardClick.bind(this);
-    this.ascIcon= this.ascIcon.bind(this);
-    this.dscIcon = this.dscIcon.bind(this);
   }
 
   handelSearch(e){
     const input = e.target;
-    let temp = this.state.data.filter(element=>{
-                  if(element.symbol.toLowerCase().includes(input.value)||
-                    element.name.toLowerCase().includes(input.value.toLowerCase())){
-                    return element;
-                  }
-                });
-    this.setState({isSearched:'searched'});
-    this.setState({data:temp});
-   <Card data={this.temp}/>
+    let temp = [...this.state.data];
+    const tmp = temp.filter(element=>{
+                          if(element.symbol.toLowerCase().includes(input.value)||
+                            element.name.toLowerCase().includes(input.value.toLowerCase())){
+                            return element;
+                          }
+                        });
+    this.setState({data:tmp});
   }
 
   handleKeypress(e){
@@ -82,158 +71,66 @@ class App extends Component {
 
   handleCardClick(e){
     if(e.target.className ==="cards"){
-      const tmp = [...this.state.data];
-      const flitered=tmp.filter(item=>{
+      let temp = [...this.state.data];
+      const tmp= temp.filter(item=>{
         if(e.target.childNodes[3].innerHTML===item.name){
         return item;
         }
       })
-      this.setState({filteredData:flitered});
+      this.setState({filteredData:tmp});
     }
+  }
+  
+  sortFn(type,arg2){
+    let tmp =[...this.state.data];
+    (!this.state.isAsc)
+    ? (type==='string' )
+        ? this.setState({
+                          data:tmp.sort(function(a,b){
+                                let nameA = a[arg2] , nameB = b[arg2];
+                                if(nameA<nameB) return -1;
+                                if(nameA>nameB) return 1;
+                                return 0;
+                              }), 
+                          isAsc:true,
+                        }) 
+
+        : this.setState({
+                          data:tmp.sort(function(a,b){ return a[arg2]-b[arg2] }),
+                          isAsc:true,
+                        })
+
+    : (type==='string' )
+        ? this.setState({
+                          data:tmp.sort(function(a,b){
+                                let nameA = a[arg2] , nameB = b[arg2];
+                                if(nameA<nameB) return 1;
+                                if(nameA>nameB) return -1;
+                                return 0;
+                              }), 
+                          isAsc:false,
+                        }) 
+
+        : this.setState({
+                          data:tmp.sort(function(a,b){ return b[arg2]-a[arg2] }),
+                          isAsc:false,
+                        })
   }
 
   handleSortName(){
-    (this.state.isAsc==='show'|| this.state.isDsc==='hide') ? this.sortByNameDsc() : 
-    this.sortByNameAsc();
+    this.sortFn('string', 'id');
   }
 
-    handleSortPrice(){
-    (this.state.isAsc==='show'|| this.state.isDsc==='hide') ? this.sortByPriceDsc() :
-    this.sortByPriceAsc();
+    handleSortRank(){
+    this.sortFn('number','rank');
   }
 
-  handleSortRank(){
-    (this.state.isAsc==='show'|| this.state.isDsc==='hide') ? this.sortByRankDsc() :
-    this.sortByRankAsc();
+  handleSortPrice(){
+    this.sortFn('number','price_usd');
   }
-
-  sortByNameAsc(){
-    this.setState({isAsc:'show'});
-    this.ascIcon();
-    const temp =this.state.data.sort(function(a,b){
-          let nameA = a.name.toLowerCase();
-          let nameB = b.name.toLowerCase();
-          if (nameA < nameB) {
-             return 1;
-           }
-           if (nameA > nameB) {
-             return -1;
-           }
-            return 0;
-        });
-    this.setState({data:temp})
-        return <Card data = {this.state.data}/>
-  }
-
-  sortByNameDsc(){
-    this.setState({isDsc:'show'});
-    this.dscIcon();
-    const temp = this.state.data.sort(function(a,b){
-          let nameA = a.name.toLowerCase();
-          let nameB = b.name.toLowerCase();
-          if (nameA < nameB) {
-             return -1;
-           }
-           if (nameA > nameB) {
-             return 1;
-           }
-           return 0;
-                  });
-    this.setState({data:temp});
-        return <Card data = {this.state.data}/>
-  }
-
-  sortByPriceAsc(){
-    const temp = [...this.state.data];
-    if(this.state.isDsc==='dsc'&& this.state.isSearched ==='searched'){
-      this.setState({isDsc:'hide'}); 
-      this.setState({isAsc:'show'});
-      this.ascIcon();
-      temp.sort(function(a,b){
-        return b.price_usd-a.price_usd;
-      })
-      this.setState({data:temp});
-        <Card data ={this.state.data}/>
-    }else{
-        this.setState({isAsc:'show'});
-        this.ascIcon();
-        temp.sort(function(a,b){
-          return b.price_usd-a.price_usd;
-        })
-        this.setState({data:temp});
-        <Card data ={this.state.data}/>
-    }
-  }
-
-  sortByPriceDsc(){
-    const temp = [...this.state.data];
-    if(this.state.isAsc==='show'&& this.state.isSearched ==='searched'){
-      this.setState({isAsc:'hide'});
-      this.setState({isDsc:'show'});
-      this.dscIcon();
-      temp.sort(function(a,b){
-        return a.price_usd-b.price_usd;
-      })
-      this.setState({data:temp});
-        <Card data ={this.state.data}/>
-    }else{
-        this.setState({isDsc:'show'});
-        this.dscIcon();
-        temp.sort(function(a,b){
-          return a.price_usd-b.price_usd;
-        })
-        this.setState({data:temp});
-        <Card data ={this.state.data}/>
-    }
-  }
-
-  sortByRankAsc(){
-    const temp = [...this.state.data];
-    if(this.state.isDsc==='show'&& this.state.isSearched ==='searched'){
-      this.setState({isDsc:'hide'});
-      this.setState({isAsc:'show'});
-      this.ascIcon();
-      temp.sort(function(a,b){
-        return b.rank-a.rank;
-      })
-      this.setState({data:temp});
-        <Card data ={this.state.data}/>
-    }else{
-        this.setState({isAsc:'show'});
-        this.ascIcon();
-        temp.sort(function(a,b){
-          return b.rank-a.rank;
-        })
-        this.setState({data:temp});
-        <Card data ={this.state.data}/>
-    }
-  }
-
-  sortByRankDsc(){
-    const temp = [...this.state.data];
-    if(this.state.isAsc==='show'&& this.state.isSearched==='searched'){
-      this.setState({isAsc:'hide'});
-      this.setState({isDsc:'show'});
-      this.dscIcon();
-      temp.sort(function(a,b){
-        return a.rank-b.rank;
-      })
-      this.setState({data:temp});
-        <Card data ={this.state.data}/>
-    }else{
-        this.setState({isDsc:'show'});
-        this.dscIcon();
-        temp.sort(function(a,b){
-          return a.rank-b.rank;
-        })
-        this.setState({data:temp});
-        <Card data ={this.state.data}/>
-    }
-  }
-
   
   fetchData(){
-    const url = "https://api.coinmarketcap.com/v1/ticker/?limit=20";
+    const url = "https://api.coinmarketcap.com/v1/ticker/?limit=2000";
     const tmp=[];
     fetch(url)
       .then(response =>response.json())
@@ -242,16 +139,6 @@ class App extends Component {
           this.setState({data:tmp})
       })
       .catch((err)=>{console.log(err)})
-  }
-
-  ascIcon(){
-    this.setState({isAsc:'show'});
-    this.setState({isDsc:'hide'});
-  }
-
-  dscIcon(){
-    this.setState({isDsc:'show'});
-    this.setState({isAsc:'hide'});
   }
 
   componentDidMount(){
@@ -267,8 +154,8 @@ class App extends Component {
         <div className="side-bar">
           <SidePannel
             Search ={this.handleKeypress}
-            SortName = {this.handleSortName}
-            SortRank = {this.handleSortRank}
+            SortName={this.handleSortName}
+            SortRank={this.handleSortRank}
             SortPrice = {this.handleSortPrice}
           />
           <CardInfo data = {this.state.filteredData}/>
@@ -277,7 +164,7 @@ class App extends Component {
           <div className="disp-header">
             <h2 className="yellow">{`Number of Currencies Displayed: ${this.state.data.length} `}</h2>
             <i className={`fas fa-sort-amount-up ${this.state.isAsc}`}></i>
-            <i className={`fas fa-sort-amount-down ${this.state.isDsc}`}></i>
+            <i className={`fas fa-sort-amount-down ${!this.state.isAsc}`}></i>
           </div> 
           <ul id={`currencies ${this.state.isSearched}`} >
             <Card data={this.state.data} Click={this.handleCardClick}/>
